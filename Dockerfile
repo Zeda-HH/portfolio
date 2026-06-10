@@ -22,6 +22,4 @@ RUN mkdir -p storage/framework/sessions \
     bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-EXPOSE 8080
-
-CMD ["bash", "start.sh"]0.0.0.0:8080 -t public
+CMD ["bash", "start.sh"]
