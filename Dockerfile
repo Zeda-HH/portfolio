@@ -22,4 +22,6 @@ RUN mkdir -p storage/framework/sessions \
     bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-CMD ["bash", "start.sh"]
+RUN chmod +x start.sh
+
+CMD ["/bin/bash", "/app/start.sh"]
