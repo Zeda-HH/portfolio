@@ -22,13 +22,16 @@ ADMIN_PASSWORD=${ADMIN_PASSWORD}
 ENVEOF
 
 echo "Running migrations..."
-php artisan migrate --force
+php artisan migrate --force || true
 
 echo "Seeding database..."
-php artisan db:seed --force
+php artisan db:seed --force || true
 
 echo "Linking storage..."
 php artisan storage:link || true
 
-echo "Starting server..."
-php -S 0.0.0.0:${PORT:-8080} -t public
+echo "Caching config..."
+php artisan config:cache || true
+
+echo "Starting server on port ${PORT:-8080}..."
+exec php -S 0.0.0.0:${PORT:-8080} -t public
