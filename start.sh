@@ -1,7 +1,5 @@
 #!/bin/bash
-set -e
 
-echo "Creating .env file..."
 cat > /app/.env << ENVEOF
 APP_NAME="Portfolio"
 APP_ENV=production
@@ -21,17 +19,9 @@ ADMIN_EMAIL=${ADMIN_EMAIL}
 ADMIN_PASSWORD=${ADMIN_PASSWORD}
 ENVEOF
 
-echo "Running migrations..."
-php artisan migrate --force || true
-
-echo "Seeding database..."
-php artisan db:seed --force || true
-
-echo "Linking storage..."
-php artisan storage:link || true
-
-echo "Caching config..."
-php artisan config:cache || true
-
-echo "Starting server on port ${PORT:-8080}..."
-exec php -S 0.0.0.0:${PORT:-8080} -t public
+php artisan migrate --force
+php artisan db:seed --force
+php artisan storage:link
+php artisan config:clear
+sleep 2
+php -S 0.0.0.0:${PORT:-8080} -t public
