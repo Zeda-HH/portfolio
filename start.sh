@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "PORT is: ${PORT}"
+
 cat > /app/.env << ENVEOF
 APP_NAME="Portfolio"
 APP_ENV=production
@@ -23,5 +25,5 @@ php artisan migrate --force
 php artisan db:seed --force
 php artisan storage:link
 php artisan config:clear
-sleep 2
+echo "Starting server on port ${PORT:-8080}..."
 php -S 0.0.0.0:${PORT:-8080} -t public
