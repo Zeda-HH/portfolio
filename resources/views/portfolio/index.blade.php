@@ -120,7 +120,7 @@
       <div class="col-md-6 col-lg-5 fade-up delay-{{ $loop->index + 1 }}">
         <div class="cert-card">
           @if($cert->image)
-  <img src="{{ $cert->image }}" alt="{{ $cert->title }}" style="width:56px;height:56px;border-radius:var(--radius-md);object-fit:cover;margin-bottom:1.25rem">
+  <img src="{{ $cert->image }}" alt="{{ $cert->title }}" style="width:80px;height:80px;border-radius:var(--radius-md);object-fit:cover;margin-bottom:1.25rem">
 @else
   <div class="cert-icon"><i class="bi bi-patch-check-fill"></i></div>
 @endif
