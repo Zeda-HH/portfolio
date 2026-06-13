@@ -25,10 +25,7 @@ class ProjectController extends Controller
         $data['technologies'] = array_filter(array_map('trim', explode(',', $request->technologies_input ?? '')));
 
         if ($request->hasFile('thumbnail')) {
-            $result = cloudinary()->upload($request->file('thumbnail')->getRealPath(), [
-                'folder' => 'portfolio/projects',
-            ]);
-            $data['thumbnail'] = $result->getSecurePath();
+            $data['thumbnail'] = $this->uploadToCloudinary($request->file('thumbnail'), 'portfolio/projects');
         }
 
         Project::create($data);
@@ -46,10 +43,7 @@ class ProjectController extends Controller
         $data['technologies'] = array_filter(array_map('trim', explode(',', $request->technologies_input ?? '')));
 
         if ($request->hasFile('thumbnail')) {
-            $result = cloudinary()->upload($request->file('thumbnail')->getRealPath(), [
-                'folder' => 'portfolio/projects',
-            ]);
-            $data['thumbnail'] = $result->getSecurePath();
+            $data['thumbnail'] = $this->uploadToCloudinary($request->file('thumbnail'), 'portfolio/projects');
         }
 
         $project->update($data);
@@ -60,6 +54,31 @@ class ProjectController extends Controller
     {
         $project->delete();
         return back()->with('success', 'Project deleted.');
+    }
+
+    private function uploadToCloudinary($file, $folder): string
+    {
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
+        $timestamp = time();
+        $signature = sha1("folder={$folder}&timestamp={$timestamp}{$apiSecret}");
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://api.cloudinary.com/v1_1/{$cloudName}/image/upload");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'file' => new \CURLFile($file->getRealPath(), $file->getMimeType(), $file->getClientOriginalName()),
+            'api_key' => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+            'folder' => $folder,
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+
+        return $response['secure_url'];
     }
 
     private function validateProject(Request $request): array

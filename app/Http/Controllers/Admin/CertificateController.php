@@ -24,10 +24,7 @@ class CertificateController extends Controller
         $data = $this->validateCert($request);
 
         if ($request->hasFile('image')) {
-            $result = cloudinary()->upload($request->file('image')->getRealPath(), [
-                'folder' => 'portfolio/certificates',
-            ]);
-            $data['image'] = $result->getSecurePath();
+            $data['image'] = $this->uploadToCloudinary($request->file('image'), 'portfolio/certificates');
         }
 
         Certificate::create($data);
@@ -44,10 +41,7 @@ class CertificateController extends Controller
         $data = $this->validateCert($request);
 
         if ($request->hasFile('image')) {
-            $result = cloudinary()->upload($request->file('image')->getRealPath(), [
-                'folder' => 'portfolio/certificates',
-            ]);
-            $data['image'] = $result->getSecurePath();
+            $data['image'] = $this->uploadToCloudinary($request->file('image'), 'portfolio/certificates');
         }
 
         $certificate->update($data);
@@ -58,6 +52,31 @@ class CertificateController extends Controller
     {
         $certificate->delete();
         return back()->with('success', 'Certificate deleted.');
+    }
+
+    private function uploadToCloudinary($file, $folder): string
+    {
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
+        $timestamp = time();
+        $signature = sha1("folder={$folder}&timestamp={$timestamp}{$apiSecret}");
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://api.cloudinary.com/v1_1/{$cloudName}/image/upload");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'file' => new \CURLFile($file->getRealPath(), $file->getMimeType(), $file->getClientOriginalName()),
+            'api_key' => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+            'folder' => $folder,
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = json_decode(curl_exec($ch), true);
+        curl_close($ch);
+
+        return $response['secure_url'];
     }
 
     private function validateCert(Request $request): array
