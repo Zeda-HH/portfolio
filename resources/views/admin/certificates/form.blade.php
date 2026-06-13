@@ -4,13 +4,23 @@
 <div style="max-width:640px">
   <a href="{{ route('admin.certificates.index') }}" class="project-link mb-4 d-inline-flex"><i class="bi bi-arrow-left"></i> Back</a>
   <div class="admin-card mt-3">
-    <form action="{{ isset($certificate->id) ? route('admin.certificates.update', $certificate) : route('admin.certificates.store') }}" method="POST">
+    <form action="{{ isset($certificate->id) ? route('admin.certificates.update', $certificate) : route('admin.certificates.store') }}" method="POST" enctype="multipart/form-data">
       @csrf
       @if(isset($certificate->id)) @method('PUT') @endif
       <div class="row g-3">
         <div class="col-12">
           <label class="form-label">Certificate Title *</label>
           <input type="text" name="title" class="form-control" value="{{ old('title', $certificate->title) }}" required>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Certificate Image/Badge</label>
+          @if($certificate->image)
+            <div class="mb-2">
+              <img src="{{ asset('storage/' . $certificate->image) }}" style="max-width:150px;border-radius:8px;border:1px solid var(--border-color)">
+            </div>
+          @endif
+          <input type="file" name="image" class="form-control" accept="image/*">
+          @error('image')<div style="color:#ff5050;font-size:0.8rem;margin-top:4px">{{ $message }}</div>@enderror
         </div>
         <div class="col-md-6">
           <label class="form-label">Issuing Organization *</label>
