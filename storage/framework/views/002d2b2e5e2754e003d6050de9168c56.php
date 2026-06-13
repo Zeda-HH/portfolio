@@ -155,7 +155,7 @@
         <div class="project-card">
           <div class="project-thumb">
             <?php if($project->thumbnail): ?>
-              <img src="<?php echo e(asset('storage/' . $project->thumbnail)); ?>" alt="<?php echo e($project->title); ?>">
+              <img src="<?php echo e($project->thumbnail); ?>" alt="<?php echo e($project->title); ?>">
             <?php else: ?>
               <div class="project-thumb-placeholder"><i class="bi bi-bar-chart-line"></i></div>
             <?php endif; ?>
