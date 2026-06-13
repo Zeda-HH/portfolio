@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Certificate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class CertificateController extends Controller
 {
@@ -25,7 +24,10 @@ class CertificateController extends Controller
         $data = $this->validateCert($request);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('certificates', 'public');
+            $result = cloudinary()->upload($request->file('image')->getRealPath(), [
+                'folder' => 'portfolio/certificates',
+            ]);
+            $data['image'] = $result->getSecurePath();
         }
 
         Certificate::create($data);
@@ -42,10 +44,10 @@ class CertificateController extends Controller
         $data = $this->validateCert($request);
 
         if ($request->hasFile('image')) {
-            if ($certificate->image) {
-                Storage::disk('public')->delete($certificate->image);
-            }
-            $data['image'] = $request->file('image')->store('certificates', 'public');
+            $result = cloudinary()->upload($request->file('image')->getRealPath(), [
+                'folder' => 'portfolio/certificates',
+            ]);
+            $data['image'] = $result->getSecurePath();
         }
 
         $certificate->update($data);
@@ -54,9 +56,6 @@ class CertificateController extends Controller
 
     public function destroy(Certificate $certificate)
     {
-        if ($certificate->image) {
-            Storage::disk('public')->delete($certificate->image);
-        }
         $certificate->delete();
         return back()->with('success', 'Certificate deleted.');
     }
@@ -67,7 +66,7 @@ class CertificateController extends Controller
             'title'          => 'required|string|max:255',
             'issuer'         => 'required|string|max:255',
             'description'    => 'nullable|string',
-            'image'          => 'nullable|image|max:2048',
+            'image'          => 'nullable|image|max:5120',
             'credential_url' => 'nullable|url|max:500',
             'issued_date'    => 'nullable|date',
             'sort_order'     => 'integer',

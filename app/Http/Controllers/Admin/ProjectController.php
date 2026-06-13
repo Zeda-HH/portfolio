@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -26,7 +25,10 @@ class ProjectController extends Controller
         $data['technologies'] = array_filter(array_map('trim', explode(',', $request->technologies_input ?? '')));
 
         if ($request->hasFile('thumbnail')) {
-            $data['thumbnail'] = $request->file('thumbnail')->store('projects', 'public');
+            $result = cloudinary()->upload($request->file('thumbnail')->getRealPath(), [
+                'folder' => 'portfolio/projects',
+            ]);
+            $data['thumbnail'] = $result->getSecurePath();
         }
 
         Project::create($data);
@@ -44,10 +46,10 @@ class ProjectController extends Controller
         $data['technologies'] = array_filter(array_map('trim', explode(',', $request->technologies_input ?? '')));
 
         if ($request->hasFile('thumbnail')) {
-            if ($project->thumbnail) {
-                Storage::disk('public')->delete($project->thumbnail);
-            }
-            $data['thumbnail'] = $request->file('thumbnail')->store('projects', 'public');
+            $result = cloudinary()->upload($request->file('thumbnail')->getRealPath(), [
+                'folder' => 'portfolio/projects',
+            ]);
+            $data['thumbnail'] = $result->getSecurePath();
         }
 
         $project->update($data);
@@ -56,9 +58,6 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        if ($project->thumbnail) {
-            Storage::disk('public')->delete($project->thumbnail);
-        }
         $project->delete();
         return back()->with('success', 'Project deleted.');
     }
@@ -68,7 +67,7 @@ class ProjectController extends Controller
         return $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
-            'thumbnail'   => 'nullable|image|max:2048',
+            'thumbnail'   => 'nullable|image|max:5120',
             'github_url'  => 'nullable|url|max:500',
             'linkedin_url'=> 'nullable|url|max:500',
             'live_url'    => 'nullable|url|max:500',
