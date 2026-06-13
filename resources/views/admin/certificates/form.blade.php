@@ -16,7 +16,7 @@
           <label class="form-label">Certificate Image/Badge</label>
           @if($certificate->image)
             <div class="mb-2">
-              <img src="{{ asset('storage/' . $certificate->image) }}" style="max-width:150px;border-radius:8px;border:1px solid var(--border-color)">
+            <img src="{{ $certificate->image }}" style="max-width:150px;border-radius:8px;border:1px solid var(--border-color)">
             </div>
           @endif
           <input type="file" name="image" class="form-control" accept="image/*">
