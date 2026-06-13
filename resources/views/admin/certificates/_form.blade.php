@@ -1,38 +1,54 @@
-<div class="mb-3">
-    <label class="form-label">Certificate Title *</label>
-    <input type="text" name="title" class="form-control custom-input @error('title') is-invalid @enderror"
-           value="{{ old('title', $certificate->title ?? '') }}" required>
-    @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
+@extends('layouts.admin')
+@section('title', isset($certificate->id) ? 'Edit Certificate' : 'Add Certificate')
+@section('content')
+<div style="max-width:640px">
+  <a href="{{ route('admin.certificates.index') }}" class="project-link mb-4 d-inline-flex"><i class="bi bi-arrow-left"></i> Back</a>
+  <div class="admin-card mt-3">
+    <form action="{{ isset($certificate->id) ? route('admin.certificates.update', $certificate) : route('admin.certificates.store') }}" method="POST" enctype="multipart/form-data">
+      @csrf
+      @if(isset($certificate->id)) @method('PUT') @endif
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label">Certificate Title *</label>
+          <input type="text" name="title" class="form-control" value="{{ old('title', $certificate->title) }}" required>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Certificate Image/Badge</label>
+          @if($certificate->image)
+            <div class="mb-2">
+              <img src="{{ asset('storage/' . $certificate->image) }}" style="max-width:150px;border-radius:8px;border:1px solid var(--border-color)">
+            </div>
+          @endif
+          <input type="file" name="image" class="form-control" accept="image/*">
+          @error('image')<div style="color:#ff5050;font-size:0.8rem;margin-top:4px">{{ $message }}</div>@enderror
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Issuing Organization *</label>
+          <input type="text" name="issuer" class="form-control" value="{{ old('issuer', $certificate->issuer) }}" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Issue Date</label>
+          <input type="date" name="issued_date" class="form-control"
+                 value="{{ old('issued_date', $certificate->issued_date ? $certificate->issued_date->format('Y-m-d') : '') }}">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="3">{{ old('description', $certificate->description) }}</textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Credential URL</label>
+          <input type="url" name="credential_url" class="form-control" value="{{ old('credential_url', $certificate->credential_url) }}" placeholder="https://...">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Sort Order</label>
+          <input type="number" name="sort_order" class="form-control" value="{{ old('sort_order', $certificate->sort_order ?? 0) }}">
+        </div>
+        <div class="col-12 d-flex gap-3 pt-2">
+          <button type="submit" class="btn-primary-custom"><i class="bi bi-check-lg"></i> {{ isset($certificate->id) ? 'Update' : 'Create' }}</button>
+          <a href="{{ route('admin.certificates.index') }}" class="btn-outline-custom">Cancel</a>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
-<div class="mb-3">
-    <label class="form-label">Issuing Organization *</label>
-    <input type="text" name="issuer" class="form-control custom-input @error('issuer') is-invalid @enderror"
-           value="{{ old('issuer', $certificate->issuer ?? '') }}" required>
-    @error('issuer')<div class="invalid-feedback">{{ $message }}</div>@enderror
-</div>
-<div class="mb-3">
-    <label class="form-label">Description</label>
-    <textarea name="description" class="form-control custom-input" rows="4">{{ old('description', $certificate->description ?? '') }}</textarea>
-</div>
-<div class="mb-3">
-    <label class="form-label">Credential URL</label>
-    <input type="url" name="credential_url" class="form-control custom-input @error('credential_url') is-invalid @enderror"
-           value="{{ old('credential_url', $certificate->credential_url ?? '') }}" placeholder="https://...">
-    @error('credential_url')<div class="invalid-feedback">{{ $message }}</div>@enderror
-</div>
-<div class="mb-3">
-    <label class="form-label">Issued Date</label>
-    <input type="date" name="issued_date" class="form-control custom-input"
-           value="{{ old('issued_date', isset($certificate->issued_date) ? $certificate->issued_date->format('Y-m-d') : '') }}">
-</div>
-<div class="mb-3">
-    <label class="form-label">Sort Order</label>
-    <input type="number" name="sort_order" class="form-control custom-input"
-           value="{{ old('sort_order', $certificate->sort_order ?? 0) }}">
-</div>
-<div class="mb-4 form-check">
-    <input type="checkbox" name="is_active" class="form-check-input" id="is_active"
-           {{ old('is_active', $certificate->is_active ?? true) ? 'checked' : '' }}>
-    <label class="form-check-label" for="is_active">Active (visible on portfolio)</label>
-</div>
-<button type="submit" class="btn btn-primary-custom"><i class="bi bi-check-lg me-2"></i>Save Certificate</button>
+@endsection
