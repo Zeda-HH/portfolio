@@ -19,7 +19,7 @@
     <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">Message</div>
     <div style="color:var(--text-secondary);line-height:1.8;white-space:pre-wrap">{{ $message->message }}</div>
     <div class="d-flex gap-3 mt-4 pt-3" style="border-top:1px solid var(--border-color)">
-      <a href="mailto:{{ $message->email }}?subject=Re: {{ urlencode($message->subject) }}" class="btn-primary-custom"><i class="bi bi-reply"></i> Reply</a>
+     <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $message->email }}&su={{ urlencode('Re: ' . $message->subject) }}" target="_blank" class="btn-primary-custom"><i class="bi bi-reply"></i> Reply via Gmail</a>
       <form action="{{ route('admin.messages.destroy', $message) }}" method="POST" onsubmit="return confirm('Delete?')">
         @csrf @method('DELETE')
         <button type="submit" class="btn-outline-custom" style="border-color:rgba(255,80,80,0.3);color:#ff5050"><i class="bi bi-trash"></i> Delete</button>
