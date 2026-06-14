@@ -49,7 +49,7 @@
       <div class="col-lg-6">
         <div class="hero-image-wrap">
           <div class="hero-image-ring"></div>
-            <img src="{{ asset('images/profile.jpg') }}" class="hero-avatar" alt="Zemen Heliso">
+            <img src="{{ asset('images/profile.jpg.jpg') }}" class="hero-avatar" alt="Zemen Heliso">
           <div class="badge-float badge-float-1">
             <span class="dot" style="background:var(--accent-cyan)"></span>
             Power BI Expert
