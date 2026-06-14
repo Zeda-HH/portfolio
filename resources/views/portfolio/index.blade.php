@@ -49,11 +49,7 @@
       <div class="col-lg-6">
         <div class="hero-image-wrap">
           <div class="hero-image-ring"></div>
-          <div class="hero-avatar-placeholder">
-            <i class="bi bi-person-circle"></i>
-          </div>
-          {{-- To add photo: place profile.jpg in public/images/ then replace div above with:
-          <img src="{{ asset('images/profile.jpg') }}" class="hero-avatar" alt="Zemen Heliso"> --}}
+            <img src="{{ asset('images/profile.jpg') }}" class="hero-avatar" alt="Zemen Heliso">
           <div class="badge-float badge-float-1">
             <span class="dot" style="background:var(--accent-cyan)"></span>
             Power BI Expert
