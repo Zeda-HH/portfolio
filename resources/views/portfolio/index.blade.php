@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="d-flex gap-3 flex-wrap">
-          <a href="{{ asset('cv/resume.pdf') }}" class="btn-primary-custom" download>
+          <a href="{{ asset('cv/resume.pdf.pdf') }}" class="btn-primary-custom" download>
             <i class="bi bi-download"></i> Download CV
           </a>
           <a href="#projects" class="btn-outline-custom">
